@@ -2,7 +2,6 @@ package com.illoy;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.Objects;
 
 public class LineStats {
     private long longCount = 0;

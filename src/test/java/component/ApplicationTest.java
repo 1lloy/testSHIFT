@@ -68,7 +68,6 @@ public class ApplicationTest {
 
     @Test
     void testProcessingMixedFile() throws IOException {
-        // создаем временный файл с данными
         Path inputFile = tempDir.resolve("input.txt");
         Files.write(inputFile, List.of(
                 "123",
@@ -104,6 +103,21 @@ public class ApplicationTest {
     }
 
     @Test
+    void testAppendingMode() throws IOException {
+        Path existingIntFile = tempDir.resolve("test_integers.txt");
+        Files.write(existingIntFile, List.of("-1211", "24e+3", "0"));
+
+        Path inputFile = tempDir.resolve("inputFile.txt");
+        Files.write(inputFile, List.of("-102", "2020", "1000e-2"));
+
+        String[] args = {"-o", tempDir.toString(), "-p", "test_", "-a", inputFile.toString()};
+        Application.main(args);
+
+        List<String> ints = Files.readAllLines(existingIntFile);
+        assertEquals(6, ints.size(), "File should have appended lines");
+    }
+
+    @Test
     void testAppendingModeWithEqualsInputOutputPaths() throws IOException {
         Path intFile = tempDir.resolve("test_integers.txt");
         Files.write(intFile, List.of("-1211"));
@@ -118,7 +132,7 @@ public class ApplicationTest {
     @Test
     void testFileNotFound() {
         String[] args = {"nonexistent.txt"};
-        // просто проверяем, что программа не падает
+
         assertDoesNotThrow(() -> Application.main(args));
     }
 
@@ -127,8 +141,8 @@ public class ApplicationTest {
         Path inputFile = tempDir.resolve("stats.txt");
         Files.write(inputFile, List.of("10", "20", "30", "text"));
 
-        String[] args = {"-s", inputFile.toString()};
-        // тут мы не проверяем вывод в консоль, но главное — программа не падает
+        String[] args = {"-o", tempDir.toString(), "-s", inputFile.toString()};
+
         assertDoesNotThrow(() -> Application.main(args));
     }
 }
